@@ -55,14 +55,14 @@ public final class ExpoGoNotificationsSchedulerModule: SchedulerModule {
   }
 
   override public func cancelAllScheduledNotifications() {
-    UNUserNotificationCenter.current().getPendingNotificationRequests { (requests: [UNNotificationRequest]) in
-      var identifierSet: Set<String> = []
-      requests.forEach { request in
-        if EXScopedNotificationsUtils.isId(request.identifier, scopedByExperience: self.scopeKey) {
-          identifierSet.insert(request.identifier)
-        }
-      }
-      UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: Array(identifierSet))
+    UNUserNotificationCenter.current().getPendingNotificationRequests { [weak self] requests in
+      guard let self = self else { return }
+
+      let identifiers = requests
+        .map(\.identifier)
+        .filter { EXScopedNotificationsUtils.isId($0, scopedByExperience: self.scopeKey) }
+
+      UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
     }
   }
 }

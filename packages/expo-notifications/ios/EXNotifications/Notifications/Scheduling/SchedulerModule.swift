@@ -133,7 +133,7 @@ open class SchedulerModule: Module {
     guard let appContext = appContext else {
       return nil
     }
-    let requestContentRecord = try NotificationRequestContentRecord(from: contentInput, appContext: appContext)
+    let requestContentRecord = try NotificationContentRecord(from: contentInput, appContext: appContext)
     return try UNNotificationRequest(
       identifier: identifier,
       content: requestContentRecord.toUNMutableNotificationContent(),
