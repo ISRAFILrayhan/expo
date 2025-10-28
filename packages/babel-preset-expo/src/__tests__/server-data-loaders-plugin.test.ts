@@ -798,6 +798,38 @@ describe('preserves', () => {
       }"
     `);
   });
+
+  it('preserves side-effect imports', () => {
+    expect(
+      transformTest(
+        `
+      import 'side-effect';
+      import { useLoaderData } from 'expo-router';
+
+      export async function loader() {
+        const response = await fetch(API_URL);
+        return response.json();
+      }
+
+      export default function Index() {
+        const data = useLoaderData();
+        return <div>{data.status} API: {API_URL}</div>;
+      }
+      `,
+        false
+      ).code
+    ).toMatchInlineSnapshot(`
+      "import 'side-effect';
+      import { useLoaderData } from 'expo-router';
+      import { jsxs as _jsxs } from "react/jsx-runtime";
+      export default function Index() {
+        const data = useLoaderData();
+        return /*#__PURE__*/_jsxs("div", {
+          children: [data.status, " API: ", API_URL]
+        });
+      }"
+    `);
+  });
 });
 
 describe('edge cases', () => {
